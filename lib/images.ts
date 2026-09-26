@@ -151,7 +151,3 @@ export type PhotoKey = keyof typeof photos;
 const UNSPLASH = "https://images.unsplash.com/";
 
 export const photoSrc = (photo: PhotoData) => `${UNSPLASH}${photo.id}`;
-
-/** Build a CDN URL at an explicit width (for SVG <image> and CSS backgrounds). */
-export const photoUrl = (photo: PhotoData, width: number, quality = 70) =>
-  `${photoSrc(photo)}?w=${width}&q=${quality}&auto=format&fit=crop`;

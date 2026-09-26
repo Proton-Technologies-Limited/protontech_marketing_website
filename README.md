@@ -94,6 +94,9 @@ Everything respects **`prefers-reduced-motion`**. With it on, smooth scroll, the
 - Keep GPU-expensive CSS off large or moving areas. That means no `mix-blend-mode` overlays and no `backdrop-filter` on cards; the fixed header is the one exception.
 - Big decorative SVG drawings play once when they enter view (`DrawOnScroll`) rather than being scrubbed on every scroll frame.
 - The hero's WebGL aurora renders at about 35% resolution and 30fps, and pauses off-screen.
+- The hero scene (`components/sections/hero/`) moves only transforms and opacity. Its resting 3D pose lives in CSS (`.hero-plane` in `globals.css`), so it renders before hydration and with reduced motion. `HeroShell` animates from that pose.
+- The hero's mock homepage is drawn twice from one 1200 × 750 coordinate system: once as a blueprint (`SiteBlueprint`) and once as the finished HTML (`SiteRender`). If you move an element in one, move it in the other.
+- The hero pins on desktop, and so does the Examples gallery. `SmoothScroll` re-aligns `#hash` deep links once the pins have added their scroll distance.
 
 ## Before launch: checklist
 

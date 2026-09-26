@@ -31,7 +31,29 @@ export function SmoothScroll() {
     gsap.ticker.add(raf);
     gsap.ticker.lagSmoothing(0);
 
+    // Pinned sections add their scroll distance after the browser has already jumped to
+    // a #hash, so deep links land short. Re-align whenever ScrollTrigger re-measures,
+    // until the visitor scrolls on their own. This scrolls natively because Lenis measures
+    // elements against its own cached position, which is stale after the browser's jump.
+    const target = window.location.hash && document.getElementById(decodeURIComponent(window.location.hash.slice(1)));
+    const align = () => {
+      if (target) window.scrollTo(0, target.getBoundingClientRect().top + window.scrollY);
+    };
+    const release = () => {
+      ScrollTrigger.removeEventListener("refresh", align);
+      ["wheel", "touchstart", "keydown", "pointerdown"].forEach((type) => window.removeEventListener(type, release));
+    };
+    let settle = 0;
+    if (target) {
+      ScrollTrigger.addEventListener("refresh", align);
+      ["wheel", "touchstart", "keydown", "pointerdown"].forEach((type) => window.addEventListener(type, release, { passive: true }));
+      requestAnimationFrame(align);
+      settle = window.setTimeout(release, 6000);
+    }
+
     return () => {
+      release();
+      window.clearTimeout(settle);
       gsap.ticker.remove(raf);
       lenis.destroy();
       setLenis(null);
