@@ -15,12 +15,28 @@ The design rationale (concept, brand system, motion system, section-by-section p
 | WebGL | A raw fragment shader for the hero aurora (no three.js) |
 | Images | `next/image` with a custom Unsplash CDN loader |
 
-## Getting started
+## Run it locally
+
+You need Node.js 20.9 or newer.
+
+1. Open a terminal in the project folder.
+2. Install dependencies (first time only):
+   ```bash
+   npm install
+   ```
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+4. Open **http://localhost:3000** in your browser. If port 3000 is busy, use the address printed in the terminal.
+
+Edits (for example to `lib/content.ts`) reload in the browser automatically. Press `Ctrl + C` in the terminal to stop the server.
+
+Other commands:
 
 ```bash
-npm install
-npm run dev      # http://localhost:3000
 npm run build    # production build (type-checks too)
+npm start        # serve the production build at http://localhost:3000
 npm run lint
 ```
 
