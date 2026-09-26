@@ -1,24 +1,24 @@
 "use client";
 
 import { useRef, type ReactNode } from "react";
-import { gsap, MQ, useGSAP } from "@/lib/gsap";
+import { gsap, MQ, ScrollTrigger, useGSAP } from "@/lib/gsap";
 
 /**
- * Draws every [data-draw] stroke inside it as the user scrolls through,
- * and fades in [data-draw-label] text. Decorative: hidden from assistive tech.
+ * Draws every [data-draw] stroke inside it when it scrolls into view, and fades
+ * in [data-draw-label] text. The drawing plays once on a timeline rather than
+ * being scrubbed: large SVGs repainting on every scroll frame cause jank.
+ * Decorative: hidden from assistive tech.
  */
 export function DrawOnScroll({
   children,
   className,
   start = "top 85%",
-  end = "bottom 40%",
-  scrub = 1,
+  duration = 2.6,
 }: {
   children: ReactNode;
   className?: string;
   start?: string;
-  end?: string;
-  scrub?: number | boolean;
+  duration?: number;
 }) {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -26,11 +26,12 @@ export function DrawOnScroll({
     () => {
       gsap.matchMedia().add(MQ.motion, () => {
         const q = gsap.utils.selector(ref);
-        const scrollTrigger = { trigger: ref.current, start, end, scrub };
         const strokes = q("[data-draw]");
         const labels = q("[data-draw-label]");
-        if (strokes.length) gsap.from(strokes, { drawSVG: 0, ease: "none", stagger: 0.035, scrollTrigger });
-        if (labels.length) gsap.from(labels, { opacity: 0, ease: "none", stagger: 0.2, scrollTrigger });
+        const tl = gsap.timeline({ paused: true, defaults: { ease: "power2.inOut" } });
+        if (strokes.length) tl.from(strokes, { drawSVG: 0, duration: duration * 0.55, stagger: { amount: duration * 0.45 } }, 0);
+        if (labels.length) tl.from(labels, { opacity: 0, duration: 0.6, stagger: 0.15, ease: "power1.out" }, duration * 0.5);
+        ScrollTrigger.create({ trigger: ref.current, start, once: true, onEnter: () => tl.play() });
       });
     },
     { scope: ref },

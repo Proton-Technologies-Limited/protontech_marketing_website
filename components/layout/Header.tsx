@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Logo } from "@/components/ui/Logo";
+import { ScrollTrigger } from "@/lib/gsap";
 import { getLenis, scrollToTarget } from "@/lib/lenis-store";
 import { site } from "@/lib/site";
 import { cn } from "@/lib/utils";
@@ -18,44 +19,71 @@ export function Header() {
   const [active, setActive] = useState("");
   const [open, setOpen] = useState(false);
 
-  // On scroll (Lenis drives native scroll, so window events fire):
-  // compact state, hide-on-scroll-down, and adopt the theme of the section under the header.
+  // On scroll (Lenis drives native scroll, so window events fire): compact state,
+  // hide-on-scroll-down, and adopt the theme of the section under the header.
+  // Section bounds are cached and only re-measured when layout changes, so
+  // scrolling itself never forces a layout read. State is set only on change.
   useEffect(() => {
     const sections = Array.from(document.querySelectorAll<HTMLElement>("[data-header-theme]"));
+    const current = { scrolled: false, hidden: false, tone: "dark" as Tone, active: "" };
+    let bands: { top: number; bottom: number; tone: Tone; id: string }[] = [];
     let lastY = window.scrollY;
     let frame = 0;
 
-    const probe = () => {
-      const line = 44; // vertical centre of the header bar
-      for (const section of sections) {
+    const measure = () => {
+      const y = window.scrollY;
+      bands = sections.map((section) => {
         const r = section.getBoundingClientRect();
-        if (r.top <= line && r.bottom > line) {
-          setTone(section.dataset.headerTheme as Tone);
-          setActive(section.id);
-          return;
+        return { top: r.top + y, bottom: r.bottom + y, tone: section.dataset.headerTheme as Tone, id: section.id };
+      });
+    };
+
+    const update = () => {
+      const y = window.scrollY;
+      const scrolledNow = y > 24;
+      if (scrolledNow !== current.scrolled) {
+        current.scrolled = scrolledNow;
+        setScrolled(scrolledNow);
+      }
+      if (Math.abs(y - lastY) > 8) {
+        const hiddenNow = y > lastY && y > 560;
+        if (hiddenNow !== current.hidden) {
+          current.hidden = hiddenNow;
+          setHidden(hiddenNow);
         }
+        lastY = y;
+      }
+      const line = y + 44; // vertical centre of the header bar
+      const band = bands.find((b) => line >= b.top && line < b.bottom);
+      if (band && (band.tone !== current.tone || band.id !== current.active)) {
+        current.tone = band.tone;
+        current.active = band.id;
+        setTone(band.tone);
+        setActive(band.id);
       }
     };
 
     const onScroll = () => {
       cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => {
-        const y = window.scrollY;
-        setScrolled(y > 24);
-        if (Math.abs(y - lastY) > 8) {
-          setHidden(y > lastY && y > 560);
-          lastY = y;
-        }
-        probe();
-      });
+      frame = requestAnimationFrame(update);
+    };
+    const remeasure = () => {
+      measure();
+      onScroll();
     };
 
-    onScroll();
+    measure();
+    update();
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
+    window.addEventListener("resize", remeasure);
+    ScrollTrigger.addEventListener("refresh", remeasure);
+    const ro = new ResizeObserver(remeasure);
+    ro.observe(document.body);
     return () => {
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
+      window.removeEventListener("resize", remeasure);
+      ScrollTrigger.removeEventListener("refresh", remeasure);
+      ro.disconnect();
       cancelAnimationFrame(frame);
     };
   }, []);
@@ -109,8 +137,8 @@ export function Header() {
             !scrolled || open
               ? "border-transparent bg-transparent"
               : light
-                ? "border-ink-900/10 bg-white/75 shadow-[0_10px_40px_-18px_rgb(7_26_51/0.35)] backdrop-blur-xl"
-                : "border-white/10 bg-ink-900/65 shadow-[0_10px_40px_-18px_rgb(0_0_0/0.6)] backdrop-blur-xl",
+                ? "border-ink-900/10 bg-white/88 shadow-[0_10px_40px_-18px_rgb(7_26_51/0.35)] backdrop-blur-md"
+                : "border-white/10 bg-ink-900/82 shadow-[0_10px_40px_-18px_rgb(0_0_0/0.6)] backdrop-blur-md",
           )}
         >
           <a href="#top" aria-label={`${site.legalName}, back to top`} className="relative z-10 shrink-0 text-[15px]">

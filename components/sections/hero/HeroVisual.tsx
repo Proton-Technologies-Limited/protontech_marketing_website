@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { gsap, MQ, useGSAP } from "@/lib/gsap";
+import { gsap, MQ, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { photos, photoUrl } from "@/lib/images";
 import { cn } from "@/lib/utils";
 
@@ -85,10 +85,12 @@ export function HeroVisual({ className }: { className?: string }) {
 
         // Pointer: subtle 3D tilt with cards floating at different depths.
         if (!window.matchMedia(MQ.finePointer).matches) return;
+        const onScreen = ScrollTrigger.create({ trigger: root.current, start: "top bottom", end: "bottom top" });
         const tilt = q("[data-tilt]")[0];
         const rotX = gsap.quickTo(tilt, "rotationX", { duration: 1.2, ease: "power3" });
         const rotY = gsap.quickTo(tilt, "rotationY", { duration: 1.2, ease: "power3" });
         const onMove = (e: PointerEvent) => {
+          if (!onScreen.isActive) return; // no work once the hero has scrolled away
           const nx = e.clientX / window.innerWidth - 0.5;
           const ny = e.clientY / window.innerHeight - 0.5;
           rotY(nx * 9);
@@ -335,7 +337,7 @@ export function HeroVisual({ className }: { className?: string }) {
             data-toggle
             role="group"
             aria-label="Preview mode"
-            className="absolute right-[6.5%] top-[12.6%] hidden -translate-y-1/2 items-center sm:flex rounded-full border border-white/15 bg-ink-950/70 p-[3px] font-mono text-[clamp(8px,1.2cqw,10.5px)] uppercase tracking-[0.12em] backdrop-blur"
+            className="absolute right-[6.5%] top-[12.6%] hidden -translate-y-1/2 items-center sm:flex rounded-full border border-white/15 bg-ink-950/90 p-[3px] font-mono text-[clamp(8px,1.2cqw,10.5px)] uppercase tracking-[0.12em]"
           >
             {(["blueprint", "live"] as const).map((m) => (
               <button
@@ -356,7 +358,7 @@ export function HeroVisual({ className }: { className?: string }) {
           {/* Floating UI cards */}
           <div
             data-card
-            className="absolute left-[0%] top-[66%] w-[52%] sm:left-[-7%] sm:top-[63%] sm:w-[44%] rounded-[clamp(12px,2cqw,18px)] border border-white/12 bg-ink-900/80 p-[clamp(10px,2cqw,16px)] shadow-[0_30px_60px_-20px_rgb(0_0_0/0.7)] backdrop-blur-xl"
+            className="absolute left-[0%] top-[66%] w-[52%] sm:left-[-7%] sm:top-[63%] sm:w-[44%] rounded-[clamp(12px,2cqw,18px)] border border-white/12 bg-ink-900/95 p-[clamp(10px,2cqw,16px)] shadow-[0_30px_60px_-20px_rgb(0_0_0/0.7)]"
           >
             <div className="flex items-center gap-[clamp(8px,1.8cqw,14px)]">
               <span className="grid size-[clamp(28px,5.4cqw,42px)] shrink-0 place-items-center rounded-full bg-cyan-400/15 text-cyan-400">
@@ -377,7 +379,7 @@ export function HeroVisual({ className }: { className?: string }) {
 
           <div
             data-card
-            className="absolute right-[0%] top-[34%] w-[30%] sm:right-[-1.5%] sm:top-[36%] sm:w-[25%] rounded-[clamp(12px,2cqw,18px)] border border-white/12 bg-ink-900/80 p-[clamp(10px,2cqw,16px)] shadow-[0_30px_60px_-20px_rgb(0_0_0/0.7)] backdrop-blur-xl"
+            className="absolute right-[0%] top-[34%] w-[30%] sm:right-[-1.5%] sm:top-[36%] sm:w-[25%] rounded-[clamp(12px,2cqw,18px)] border border-white/12 bg-ink-900/95 p-[clamp(10px,2cqw,16px)] shadow-[0_30px_60px_-20px_rgb(0_0_0/0.7)]"
           >
             <div className="flex items-center gap-[clamp(8px,1.6cqw,12px)]">
               <svg viewBox="0 0 40 40" className="size-[clamp(30px,6cqw,46px)] shrink-0 -rotate-90" aria-hidden="true">

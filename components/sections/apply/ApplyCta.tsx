@@ -22,8 +22,7 @@ export function ApplyCta() {
         />
         <DrawOnScroll
           className="pointer-events-none absolute -left-[12%] top-1/2 w-[min(58rem,90vw)] -translate-y-1/2 text-cyan-400/25 lg:-left-[6%]"
-          start="top 80%"
-          end="center 45%"
+          start="top 65%"
         >
           <MarkOutline className="h-auto w-full" />
         </DrawOnScroll>

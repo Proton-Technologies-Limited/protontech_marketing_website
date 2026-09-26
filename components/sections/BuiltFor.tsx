@@ -70,7 +70,10 @@ export function BuiltFor() {
           <span className="size-1.5 rounded-full bg-cyan-400" aria-hidden="true" />
           Built for
         </p>
-        <div className="mask-fade-x min-w-0 flex-1 overflow-hidden">
+        {/* Edge fades are overlays, not a mask: masking a moving layer recomposites every frame. */}
+        <div className="relative min-w-0 flex-1 overflow-hidden">
+          <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-linear-to-r from-ink-950 to-ink-950/0 sm:w-28" />
+          <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-linear-to-l from-ink-950 to-ink-950/0 sm:w-28" />
           <div data-track className="flex w-max will-change-transform">
             {[0, 1].map((copy) => (
               <ul key={copy} aria-hidden={copy === 1 ? true : undefined} className="flex shrink-0 items-center">

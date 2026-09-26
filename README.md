@@ -88,6 +88,13 @@ The custom cursor reads `data-cursor="view"` with `data-cursor-label="Preview"` 
 
 Everything respects **`prefers-reduced-motion`**. With it on, smooth scroll, the cursor, parallax and scrubbed drawings are disabled, and every element renders in its final state.
 
+### Performance notes
+
+- **Judge scroll smoothness on a production build** (`npm run build && npm start`). `npm run dev` adds React development checks and is noticeably heavier.
+- Keep GPU-expensive CSS off large or moving areas. That means no `mix-blend-mode` overlays and no `backdrop-filter` on cards; the fixed header is the one exception.
+- Big decorative SVG drawings play once when they enter view (`DrawOnScroll`) rather than being scrubbed on every scroll frame.
+- The hero's WebGL aurora renders at about 35% resolution and 30fps, and pauses off-screen.
+
 ## Before launch: checklist
 
 - [ ] Set `NEXT_PUBLIC_SITE_URL` and replace the placeholder email in `lib/site.ts`

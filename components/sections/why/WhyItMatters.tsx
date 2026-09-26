@@ -20,8 +20,7 @@ export function WhyItMatters() {
       <div aria-hidden="true" className="bg-grid-light mask-fade-y pointer-events-none absolute inset-0" />
       <DrawOnScroll
         className="pointer-events-none absolute -right-24 top-24 hidden w-[44rem] text-navy-700/25 xl:block"
-        start="top 90%"
-        end="center 40%"
+        start="top 75%"
       >
         <FloorPlan className="h-auto w-full" />
       </DrawOnScroll>
@@ -62,7 +61,7 @@ export function WhyItMatters() {
               key={pillar.title}
               data-reveal="fade-up"
               data-delay={i * 0.08}
-              className="crop-marks group relative rounded-[1.25rem] bg-white/70 p-8 ring-1 ring-line backdrop-blur-sm transition-shadow duration-500 hover:shadow-[0_24px_60px_-30px_rgb(8_72_124/0.35)] lg:p-10"
+              className="crop-marks group relative rounded-[1.25rem] bg-white/85 p-8 ring-1 ring-line transition-shadow duration-500 hover:shadow-[0_24px_60px_-30px_rgb(8_72_124/0.35)] lg:p-10"
             >
               <span className="grid size-12 place-items-center rounded-2xl bg-blue-500/8 text-blue-500 ring-1 ring-blue-500/15 transition-colors duration-500 group-hover:bg-blue-500 group-hover:text-white">
                 <LineIcon name={pillar.icon as IconName} />

@@ -84,13 +84,13 @@ export function DesignVisual() {
         </BrowserFrame>
       </div>
 
-      <div className="absolute right-[3%] top-[30%] hidden w-[34%] max-w-[190px] rounded-2xl lg:block border border-white/10 bg-ink-900/85 p-4 shadow-2xl backdrop-blur-md">
+      <div className="absolute right-[3%] top-[30%] hidden w-[34%] max-w-[190px] rounded-2xl lg:block border border-white/10 bg-ink-900/95 p-4 shadow-2xl">
         <p className="font-serif text-5xl leading-none text-white">Aa</p>
         <p className="mt-3 text-sm font-semibold text-white">Instrument Serif</p>
         <p className="mono-label mt-1 !text-[0.62rem] text-steel-300">Display · 64 / 68</p>
       </div>
 
-      <div className="absolute bottom-[7%] right-[4%] rounded-2xl border border-white/10 bg-ink-900/85 p-4 shadow-2xl backdrop-blur-md">
+      <div className="absolute bottom-[7%] right-[4%] rounded-2xl border border-white/10 bg-ink-900/95 p-4 shadow-2xl">
         <p className="mono-label !text-[0.62rem] text-steel-300">Brand palette</p>
         <div className="relative mt-3 flex gap-2">
           {SWATCHES.map((color) => (

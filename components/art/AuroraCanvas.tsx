@@ -9,7 +9,8 @@ void main() { gl_Position = vec4(a_pos, 0.0, 1.0); }
 `;
 
 // Domain-warped gradient noise tinted with the Proton palette, plus a soft
-// pointer glow and film grain. Rendered at reduced resolution (it's all blur).
+// pointer glow. It's all soft gradients, so it renders at a fraction of the
+// display resolution and is upscaled by the browser (film grain comes from CSS).
 const FRAG = `
 precision mediump float;
 uniform vec2 u_res;
@@ -32,7 +33,13 @@ float noise(vec2 p) {
 float fbm(vec2 p) {
   float v = 0.0;
   float a = 0.5;
-  for (int i = 0; i < 5; i++) { v += a * noise(p); p *= 2.03; a *= 0.5; }
+  for (int i = 0; i < 4; i++) { v += a * noise(p); p *= 2.03; a *= 0.5; }
+  return v;
+}
+float fbm3(vec2 p) {
+  float v = 0.0;
+  float a = 0.5;
+  for (int i = 0; i < 3; i++) { v += a * noise(p); p *= 2.03; a *= 0.5; }
   return v;
 }
 
@@ -42,7 +49,7 @@ void main() {
   vec2 p = vec2(uv.x * aspect, uv.y);
   float t = u_time * 0.035;
 
-  vec2 q = vec2(fbm(p * 1.25 + vec2(0.0, t)), fbm(p * 1.25 + vec2(5.2, -t)));
+  vec2 q = vec2(fbm3(p * 1.25 + vec2(0.0, t)), fbm3(p * 1.25 + vec2(5.2, -t)));
   float n = fbm(p * 1.1 + 1.7 * q + vec2(t * 0.6, t * 0.25)) * 0.5 + 0.5;
 
   vec2 focus = vec2(u_focus.x * aspect, u_focus.y);
@@ -63,9 +70,6 @@ void main() {
   col = mix(col, navy, clamp(g2 * n, 0.0, 1.0) * 0.4);
   col += cyan * gm * 0.07 * n;
   col *= mix(0.72, 1.0, smoothstep(1.25, 0.25, distance(uv, vec2(0.55, 0.5))));
-
-  float grain = fract(sin(dot(gl_FragCoord.xy + fract(u_time) * 100.0, vec2(12.9898, 78.233))) * 43758.5453);
-  col += (grain - 0.5) * 0.018;
   gl_FragColor = vec4(col, 1.0);
 }
 `;
@@ -120,8 +124,12 @@ export function AuroraCanvas({ className, focusX = 0.78, focusY = 0.62 }: { clas
     gl.uniform2f(uFocus, focusX, focusY);
 
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const scale = Math.min(window.devicePixelRatio || 1, 1.5) * 0.55;
+    // ~0.35 buffer pixels per CSS pixel regardless of DPR: roughly 1/6 of the
+    // previous fill cost on retina screens with no visible difference.
+    const scale = 0.35;
+    const FRAME_MS = 1000 / 30; // the drift is slow, so 30fps is indistinguishable
     const mouse = { x: 0.7, y: 0.6, tx: 0.7, ty: 0.6 };
+    const pointer = { x: -1, y: -1, dirty: false };
 
     const resize = () => {
       const w = Math.max(1, Math.round(canvas.clientWidth * scale));
@@ -138,10 +146,23 @@ export function AuroraCanvas({ className, focusX = 0.78, focusY = 0.62 }: { clas
 
     let raf = 0;
     let running = false;
+    let lastDraw = 0;
     const start = performance.now() - 20000;
     const frame = (now: number) => {
-      mouse.x += (mouse.tx - mouse.x) * 0.04;
-      mouse.y += (mouse.ty - mouse.y) * 0.04;
+      if (running && now - lastDraw < FRAME_MS) {
+        raf = requestAnimationFrame(frame);
+        return;
+      }
+      lastDraw = now;
+      // Map the pointer once per drawn frame instead of on every pointermove.
+      if (pointer.dirty) {
+        const r = canvas.getBoundingClientRect();
+        mouse.tx = (pointer.x - r.left) / r.width;
+        mouse.ty = 1 - (pointer.y - r.top) / r.height;
+        pointer.dirty = false;
+      }
+      mouse.x += (mouse.tx - mouse.x) * 0.08;
+      mouse.y += (mouse.ty - mouse.y) * 0.08;
       gl.uniform1f(uTime, (now - start) / 1000);
       gl.uniform2f(uMouse, mouse.x, mouse.y);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
@@ -179,9 +200,9 @@ export function AuroraCanvas({ className, focusX = 0.78, focusY = 0.62 }: { clas
     document.addEventListener("visibilitychange", onVisibility);
 
     const onPointer = (e: PointerEvent) => {
-      const r = canvas.getBoundingClientRect();
-      mouse.tx = (e.clientX - r.left) / r.width;
-      mouse.ty = 1 - (e.clientY - r.top) / r.height;
+      pointer.x = e.clientX;
+      pointer.y = e.clientY;
+      pointer.dirty = true;
     };
     window.addEventListener("pointermove", onPointer, { passive: true });
 

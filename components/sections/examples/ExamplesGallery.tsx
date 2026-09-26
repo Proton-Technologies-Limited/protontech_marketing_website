@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, type ReactNode } from "react";
-import { gsap, MQ, useGSAP } from "@/lib/gsap";
+import { gsap, MQ, ScrollTrigger, useGSAP } from "@/lib/gsap";
 
 /**
  * Desktop (motion allowed): pins the gallery and converts vertical scroll into
@@ -35,6 +35,20 @@ export function ExamplesGallery({ children, count }: { children: ReactNode; coun
         gsap.set(fill, { scaleX: p });
         if (counter.current) counter.current.textContent = String(Math.min(count, Math.floor(p * count) + 1)).padStart(2, "0");
       };
+
+      // Load and decode the gallery's photos before the pinned slide begins, so
+      // images don't pop in (and decode on the main thread) mid-scroll.
+      ScrollTrigger.create({
+        trigger: root.current,
+        start: "top bottom+=1500",
+        once: true,
+        onEnter: () =>
+          q("img").forEach((node) => {
+            const img = node as HTMLImageElement;
+            if (img.loading === "lazy") img.loading = "eager";
+            img.decode?.().catch(() => {});
+          }),
+      });
 
       // Touch devices: tap a frame to run its preview.
       const onClick = (e: MouseEvent) => {

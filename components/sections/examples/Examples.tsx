@@ -49,7 +49,7 @@ export function Examples() {
                 className="rounded-[clamp(10px,1.2vw,16px)] outline-offset-4 transition-transform duration-700 ease-out-expo group-hover:-translate-y-1.5"
               >
                 <BrowserFrame url={example.url} className="shadow-[0_40px_90px_-40px_rgb(7_26_51/0.5)]">
-                  <div data-site-viewport aria-hidden="true" className="relative aspect-[16/10] overflow-hidden [container-type:inline-size]">
+                  <div data-site-viewport aria-hidden="true" className="relative aspect-[16/10] overflow-hidden [contain:layout_paint] [container-type:inline-size]">
                     <div
                       data-site-scroll
                       className="absolute inset-x-0 top-0 transition-transform duration-[1.4s] ease-[cubic-bezier(.6,0,.2,1)] group-focus-within:[transform:translateY(var(--dist,0px))] group-hover:[transform:translateY(var(--dist,0px))] group-hover:duration-[7s] group-hover:ease-[cubic-bezier(.45,0,.25,1)] group-[.is-previewing]:[transform:translateY(var(--dist,0px))] group-[.is-previewing]:duration-[7s]"

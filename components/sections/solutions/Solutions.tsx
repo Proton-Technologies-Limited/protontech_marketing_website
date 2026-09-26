@@ -40,7 +40,7 @@ export function Solutions() {
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(50%_40%_at_85%_10%,rgb(16_140_232/0.18),transparent_70%),radial-gradient(45%_35%_at_10%_90%,rgb(24_196_252/0.1),transparent_70%)]"
       />
-      <DrawOnScroll className="pointer-events-none absolute inset-0 text-cyan-400/25" start="top 70%" end="bottom 70%">
+      <DrawOnScroll className="pointer-events-none absolute inset-0 text-cyan-400/25" start="top 60%" duration={3.2}>
         <CircuitBackdrop className="size-full" />
       </DrawOnScroll>
 
@@ -66,13 +66,13 @@ export function Solutions() {
                 data-reveal="fade-up"
                 data-delay={(i % 3) * 0.06}
                 className={cn(
-                  "spotlight group flex flex-col rounded-[1.75rem] border border-white/10 bg-ink-900/55 p-2 backdrop-blur-sm",
+                  "spotlight group flex flex-col rounded-[1.75rem] border border-white/10 bg-ink-900/80 p-2",
                   layout[item.key],
                 )}
               >
                 <div
                   className={cn(
-                    "relative overflow-hidden rounded-[1.3rem] bg-ink-850/60 ring-1 ring-white/[0.06]",
+                    "relative overflow-hidden rounded-[1.3rem] bg-ink-850/60 ring-1 ring-white/[0.06] [contain:layout_paint]",
                     large ? "min-h-[22rem] flex-1 lg:min-h-[30rem]" : "h-[17rem]",
                   )}
                 >
