@@ -88,7 +88,12 @@ Format: `[node]──── 01 · WHY IT MATTERS`. A glowing node, a short trace
 | Stagger budget | Total ≤ 500ms per group |
 
 **Signature moments**
-1. **Hero:** grid → circuit traces → browser frame → interior drawing draw in sequence. The drawing then *renders* into a finished website with a real photo in an arch, text and a CTA. Floating UI cards parallax with the mouse.
+1. **Hero ("Blueprint → Live"):** a full-bleed 3D canvas beside the headline, played in three acts.
+   - **Draft:** drafting guides sweep across the viewport, a 12-column grid flashes in, and the homepage wireframe and interior elevation draw on a blueprint sheet.
+   - **Print:** a scan line wipes the sheet away to reveal the finished concept site (photo, type, CTA).
+   - **Live:** the performance card counts up to 98. A small cursor then keeps clicking "Book a consultation", and each click drops a new enquiry into the notification card.
+   - **Scroll (desktop):** the section pins, the copy lifts away, and the canvas swings flat and splits into desktop, phone and live cards ("Fig. 02 — One design, every screen").
+   - **Pointer:** the whole scene tilts toward the pointer, so depth does the parallax.
 2. **Why it matters:** the statement lights up word by word as you scroll, and a circuit trace draws between the stat cards while the numbers count up.
 3. **Solutions:** each bento card has a live mini-illustration (phone reflow, speed gauge, search typing, colour editor, security checklist) and a cursor-following spotlight border.
 4. **Examples:** a pinned horizontal gallery (desktop) with browser mock-ups; hovering scrolls the concept site inside its frame.
@@ -117,7 +122,7 @@ Colours adapt to dark and light sections. The cursor is only enabled for fine po
 | # | Section | Theme | Background design | Eyebrow |
 |---|---|---|---|---|
 | 0 | Header (sticky) | adaptive | transparent → frosted "island" after scroll; hides on scroll down | — |
-| 1 | **Hero** | dark `ink-950` | WebGL aurora (brand blues) + drafting grid + animated blueprint of a website/interior + grain | Pill: "Free website program" |
+| 1 | **Hero** | dark `ink-950` | WebGL aurora (brand blues) + drafting grid + full-bleed 3D blueprint canvas that renders into a website, pinned on desktop scroll + grain | Pill: "Free website program" |
 | 1b | Built-for marquee | dark | thin rule lines, scroll-velocity marquee | — |
 | 2 | **Why your B2B website matters more than ever** | light `paper` | grid paper + journey trace drawn on scroll | `01 · Why it matters` |
 | 3 | **A full suite of web design solutions** | dark `ink-950` | circuit traces behind a bento grid, radial glows | `02 · What you get` |
@@ -131,7 +136,11 @@ Colours adapt to dark and light sections. The cursor is only enabled for fine po
 - **Lead:** "Custom website design that connects and delivers. We design, build and launch high-performing websites for interior designers, renovators and decorators: $0 upfront, then just $150 a year for hosting and care."
 - **CTAs:** *Apply for your free website* (primary) · *See what we build* (secondary).
 - **Proof chips:** $0 design & build · $150/yr hosting & care · Mobile-first & SEO-ready.
-- **Visual:** a browser frame drawn in blueprint lines, with an interior drawing inside an arch. It "renders" into a finished concept website. Floating UI cards ("New enquiry: kitchen renovation", "Performance 98") and dimension annotations sit around it.
+- **Visual:** a large browser canvas in 3D perspective that bleeds off the right and bottom edges; there is no contained card. It starts as a blueprint (wireframe, arch elevation, dimensions and guides that cross the viewport) and a scan line "prints" it into the Atelier Nord concept homepage. Floating UI cards sit in depth around it: a cycling "New enquiry" notification and "Performance 98".
+- **Scroll (desktop, pinned for about 1.2 viewports):** the copy exits, and the canvas turns to face the viewer and centres. A phone slides out from behind it, the cards spread out, and the device labels draw in before the page continues to the marquee.
+- **Mobile and tablet:** no pin. The canvas follows the copy with the phone in front, plays its sequence when it scrolls into view, and turns flatter as it scrolls through.
+- **Reduced motion or no JavaScript:** the rendered resting composition, fully static.
+- **Performance:** the finished site paints on load under an opaque blueprint sheet, so its photo counts for LCP immediately. The print wipe is built from counter-moving transforms (no repaint), and the ambient loop pauses off-screen.
 
 ### 1b. Built-for marquee
 "Interior design studios · Renovation contractors · Kitchen & bath specialists · Painters & decorators · Flooring & tiling · Furniture & upholstery · Lighting design · Curtains & blinds · Home staging · Commercial fit-outs"

@@ -779,6 +779,176 @@
 }
 
 /* ─────────────────────────────────────────────────────────────
+   Hero stage: the 3D "blueprint → website" scene.
+   The rest pose lives here so it renders before hydration, without
+   JavaScript and with reduced motion. HeroShell reads --ry / --rx and
+   animates from this pose. Scene sizes derive from the frame width.
+   ───────────────────────────────────────────────────────────── */
+@layer components {
+  .hero-pin {
+    --hero-pt: clamp(7.75rem, 16vh, 10.5rem);
+  }
+
+  /* Phones and tablets: the stage follows the copy and bleeds off the right edge. */
+  .hero-stage {
+    --fw: 128vw; /* frame width */
+    --k: calc(var(--fw) / 100); /* 1% of the frame width */
+    position: relative;
+    height: calc(var(--fw) * 0.9);
+    margin-top: clamp(2.5rem, 9vw, 4.5rem);
+    perspective: 1400px;
+  }
+
+  .hero-tilt {
+    position: absolute;
+    top: calc(var(--fw) * 0.1);
+    left: var(--gutter);
+    width: var(--fw);
+    transform-style: preserve-3d;
+  }
+
+  .hero-plane {
+    --ry: 12;
+    --rx: 5;
+    position: relative;
+    aspect-ratio: 1200 / 750;
+    transform-style: preserve-3d;
+    transform-origin: 0% 50%;
+    transform: rotateY(calc(var(--ry) * 1deg)) rotateX(calc(var(--rx) * 1deg));
+  }
+
+  .hero-phone {
+    left: 3%;
+    top: 26%;
+    width: 26%;
+    transform: translateZ(80px);
+  }
+
+  .hero-float-enquiry {
+    left: 28%;
+    top: 64%;
+    width: 45%;
+  }
+
+  .hero-float-perf {
+    left: 42%;
+    top: -14%;
+    width: 25%;
+  }
+
+  @media (min-width: 640px) {
+    .hero-stage {
+      --fw: 108vw;
+      height: calc(var(--fw) * 0.8);
+    }
+
+    .hero-phone {
+      left: 4%;
+      top: 22%;
+      width: 21%;
+    }
+
+    .hero-float-enquiry {
+      left: 32%;
+      top: 62%;
+      width: 34%;
+    }
+
+    .hero-float-perf {
+      left: 46%;
+      top: -12%;
+      width: 20%;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .hero-stage {
+      --fw: 80vw;
+      position: absolute;
+      inset: 0;
+      height: auto;
+      margin: 0;
+      perspective: 1800px;
+      perspective-origin: 50% 45%;
+    }
+
+    /* Anchored to the copy grid: starts at the content centre, level with the last headline line. */
+    .hero-tilt {
+      top: calc(var(--hero-pt) + 3.6rem + 2.2 * var(--fs-display-1));
+      left: calc((100% - min(100%, 90rem)) / 2 + var(--gutter) + (min(100%, 90rem) - 2 * var(--gutter)) * 0.52);
+    }
+
+    .hero-plane {
+      --ry: 16;
+      --rx: 7;
+    }
+
+    /* Tucked behind the desktop frame until the scroll act brings it out. */
+    .hero-phone {
+      left: 66%;
+      top: 14%;
+      width: 22%;
+      transform: translateZ(-60px);
+    }
+
+    .hero-float-enquiry {
+      left: 30%;
+      top: 53%;
+      width: 29%;
+    }
+
+    .hero-float-perf {
+      left: 41%;
+      top: -8%;
+      width: 19%;
+    }
+
+    .hero-pin.is-presenting [data-hero-copy] {
+      pointer-events: none;
+    }
+  }
+
+  @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+    .hero-tilt,
+    .hero-plane,
+    .hero-phone,
+    [data-float] {
+      will-change: transform;
+    }
+  }
+
+  /* "Scroll" cue: a dot travelling down a hairline */
+  .scroll-cue {
+    position: relative;
+    width: 3px;
+    height: 2.75rem;
+    overflow: hidden;
+    background: linear-gradient(rgb(160 208 252 / 0.22), rgb(160 208 252 / 0.22)) center / 1px 100% no-repeat;
+  }
+
+  .scroll-cue::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 0.8rem;
+    border-radius: 999px;
+    background: var(--color-cyan-400);
+    box-shadow: 0 0 10px var(--color-cyan-400);
+    animation: scroll-cue 2.4s var(--ease-in-out-quart) infinite;
+  }
+}
+
+@keyframes scroll-cue {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(350%);
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
    Scroll reveal initial states.
    Only applied when scripting is on and motion is allowed. If the
    RevealManager never boots (html lacks .reveal-ready), a timed
@@ -818,14 +988,15 @@
     transform: translateX(-8px);
   }
 
-  /* Hero drawing stays hidden until its timeline has set the "undrawn" state */
-  .hero-visual:not(.is-ready) {
+  /* The hero stage stays hidden until its timeline has set the "undrawn" state.
+     If that never happens, it appears in its finished state after 4s. */
+  .hero-stage:not(.is-ready) {
     visibility: hidden;
+    animation: reveal-fallback 0.6s ease 4s forwards;
   }
 
   html:not(.reveal-ready) [data-reveal],
-  html:not(.reveal-ready) [data-eyebrow] > *,
-  html:not(.reveal-ready) .hero-visual {
+  html:not(.reveal-ready) [data-eyebrow] > * {
     animation: reveal-fallback 0.6s ease 3.5s forwards;
   }
 }
